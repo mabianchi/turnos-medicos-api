@@ -28,4 +28,31 @@ public class PacienteService {
         });
         return repository.save(paciente);
     }
+
+    @Transactional
+    public Paciente actualizar(Long id, Paciente datos) {
+        Paciente existente = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado " + id));
+
+        //Si cambia la cedula, verificar que no la tenga otro paciente
+        if(!existente.getCedula().equals(datos.getCedula())){
+            repository.findByCedula(datos.getCedula()).ifPresent(p -> {
+                throw new IllegalStateException("Ya existe un paciente con cèdula " + datos.getCedula());
+            });
+        }
+
+        existente.setNombre(datos.getNombre());
+        existente.setApellido(datos.getApellido());
+        existente.setEmail(datos.getEmail());
+        existente.setCedula(datos.getCedula());
+
+        return existente;
+    }
+
+    @Transactional
+    public void eliminar(Long id) {
+        Paciente paciente = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No existe un paciente con id " + id));
+        repository.delete(paciente);
+    }
 }
