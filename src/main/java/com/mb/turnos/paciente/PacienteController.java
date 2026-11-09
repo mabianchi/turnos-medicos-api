@@ -30,4 +30,15 @@ public class PacienteController {
     public Paciente crear(@RequestBody Paciente paciente){
         return service.crear(paciente);
     }
+
+    @PutMapping("/{id}")
+    public Paciente actualizar(@PathVariable Long id, @RequestBody Paciente paciente){
+        return service.actualizar(id, paciente);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+    }
 }
