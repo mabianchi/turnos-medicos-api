@@ -24,7 +24,7 @@ public class PacienteService {
     @Transactional
     public Paciente crear(Paciente paciente){
         repository.findByCedula(paciente.getCedula()).ifPresent(p -> {
-            throw new IllegalStateException("Ya existe un paciente con Cedula " + paciente.getCedula());
+            throw new IllegalStateException("Ya existe un paciente con Cédula " + paciente.getCedula());
         });
         return repository.save(paciente);
     }
@@ -37,7 +37,7 @@ public class PacienteService {
         //Si cambia la cedula, verificar que no la tenga otro paciente
         if(!existente.getCedula().equals(datos.getCedula())){
             repository.findByCedula(datos.getCedula()).ifPresent(p -> {
-                throw new IllegalStateException("Ya existe un paciente con cèdula " + datos.getCedula());
+                throw new IllegalStateException("Ya existe un paciente con cédula " + datos.getCedula());
             });
         }
 

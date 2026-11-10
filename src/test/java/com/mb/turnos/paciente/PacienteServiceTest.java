@@ -1,8 +1,5 @@
-package com.mb.turnos;
+package com.mb.turnos.paciente;
 
-import com.mb.turnos.paciente.Paciente;
-import com.mb.turnos.paciente.PacienteRepository;
-import com.mb.turnos.paciente.PacienteService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
