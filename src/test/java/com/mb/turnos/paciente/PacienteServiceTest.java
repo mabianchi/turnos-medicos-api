@@ -24,13 +24,13 @@ class PacienteServiceTest {
 
     @Test
     void eliminar_lanzaErrorSiElPacienteNoExiste(){
-        // Preparer: simular que la base no encuentra el id 99
+        // Preparar: simular que la base no encuentra el id 99
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         // Ejecutar y comprobar: tiene que lanzar la excepcion
         assertThrows(IllegalArgumentException.class, () -> service.eliminar(99L));
 
-        // Y nunca debe intentar borrar nada}
+        // Y nunca debe intentar borrar nada
         verify(repository, never()).delete(any());
     }
 
@@ -115,5 +115,24 @@ class PacienteServiceTest {
         assertEquals("333", resultado.getCedula());
     }
 
+    @Test
+    void buscarPorCedula_lanzaErrorSiNoExiste(){
+        //PREPARAR
+        when(repository.findByCedula("111")).thenReturn(Optional.empty());
+
+        //EJECUTAR
+        assertThrows(IllegalArgumentException.class, () -> service.buscarPorCedula("111"));
+    }
+
+    @Test
+    void buscarPorCedula_obtienePacientePorCedula(){
+
+        Paciente paciente = new Paciente();
+        paciente.setCedula("111");
+
+        when(repository.findByCedula("111")).thenReturn(Optional.of(paciente));
+
+        assertEquals(paciente, service.buscarPorCedula("111"));
+    }
 
 }

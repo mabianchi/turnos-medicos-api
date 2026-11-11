@@ -21,6 +21,10 @@ public class PacienteService {
         return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado " + id));
     }
 
+    public Paciente buscarPorCedula(String cedula){
+        return repository.findByCedula(cedula).orElseThrow(() -> new IllegalArgumentException("Paciente con cédula " + cedula + " no encontrado."));
+    }
+
     @Transactional
     public Paciente crear(Paciente paciente){
         repository.findByCedula(paciente.getCedula()).ifPresent(p -> {
