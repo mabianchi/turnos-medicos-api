@@ -1,5 +1,7 @@
 package com.mb.turnos.paciente;
 
+import com.mb.turnos.error.ConflictoException;
+import com.mb.turnos.error.RecursoNoEncontradoException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,17 +20,17 @@ public class PacienteService {
     }
 
     public Paciente buscarPorId(Long id){
-        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado " + id));
+        return repository.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("No existe paciente con id " + id));
     }
 
     public Paciente buscarPorCedula(String cedula){
-        return repository.findByCedula(cedula).orElseThrow(() -> new IllegalArgumentException("Paciente con cédula " + cedula + " no encontrado."));
+        return repository.findByCedula(cedula).orElseThrow(() -> new RecursoNoEncontradoException("No existe paciente con cédula " + cedula));
     }
 
     @Transactional
     public Paciente crear(Paciente paciente){
         repository.findByCedula(paciente.getCedula()).ifPresent(p -> {
-            throw new IllegalStateException("Ya existe un paciente con Cédula " + paciente.getCedula());
+            throw new ConflictoException("Ya existe un paciente con cédula " + paciente.getCedula());
         });
         return repository.save(paciente);
     }
@@ -36,12 +38,12 @@ public class PacienteService {
     @Transactional
     public Paciente actualizar(Long id, Paciente datos) {
         Paciente existente = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe paciente con id " + id));
 
         //Si cambia la cedula, verificar que no la tenga otro paciente
         if(!existente.getCedula().equals(datos.getCedula())){
             repository.findByCedula(datos.getCedula()).ifPresent(p -> {
-                throw new IllegalStateException("Ya existe un paciente con cédula " + datos.getCedula());
+                throw new ConflictoException("Ya existe un paciente con cédula " + datos.getCedula());
             });
         }
 
@@ -56,7 +58,7 @@ public class PacienteService {
     @Transactional
     public void eliminar(Long id) {
         Paciente paciente = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No existe un paciente con id " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe un paciente con id " + id));
         repository.delete(paciente);
     }
 }
