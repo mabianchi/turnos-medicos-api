@@ -25,6 +25,11 @@ public class PacienteController {
         return service.buscarPorId(id);
     }
 
+    @GetMapping("/cedula/{cedula}")
+    public Paciente buscarPorCedula(@PathVariable String cedula){
+        return service.buscarPorCedula(cedula);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Paciente crear(@RequestBody Paciente paciente){

@@ -24,13 +24,13 @@ class PacienteServiceTest {
 
     @Test
     void eliminar_lanzaErrorSiElPacienteNoExiste(){
-        // Preparer: simular que la base no encuentra el id 99
+        // Preparar: simular que la base no encuentra el id 99
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         // Ejecutar y comprobar: tiene que lanzar la excepcion
         assertThrows(IllegalArgumentException.class, () -> service.eliminar(99L));
 
-        // Y nunca debe intentar borrar nada}
+        // Y nunca debe intentar borrar nada
         verify(repository, never()).delete(any());
     }
 
@@ -78,4 +78,61 @@ class PacienteServiceTest {
         // COMPROBAR
         assertEquals("Ana María", resultado.getNombre());
     }
+
+    @Test
+    void actualizar_lanzaErrorSiLaNuevaCedulaYaLaTieneOtroPaciente() {
+        //PREPARAR
+        Paciente paciente1 = new Paciente();
+        paciente1.setCedula("111");
+
+        Paciente paciente2 = new Paciente();
+        paciente2.setCedula("222");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(paciente1));
+        when(repository.findByCedula("222")).thenReturn(Optional.of(paciente2));
+
+        //EJECUTAR
+        Paciente body = new Paciente();
+        body.setCedula("222");
+
+        //COMPROBAR
+        assertThrows(IllegalStateException.class, () -> service.actualizar(1L, body));
+    }
+
+    @Test
+    void actualizar_cambiaLaCedulaSiNadieLaTiene() {
+        //PREPARAR
+        Paciente paciente1 = new Paciente();
+        paciente1.setCedula("111");
+        when(repository.findById(1L)).thenReturn(Optional.of(paciente1));
+
+        //EJECUTAR
+        Paciente body = new Paciente();
+        body.setCedula("333");
+
+        //COMPROBAR
+        Paciente resultado = service.actualizar(1L, body);
+        assertEquals("333", resultado.getCedula());
+    }
+
+    @Test
+    void buscarPorCedula_lanzaErrorSiNoExiste(){
+        //PREPARAR
+        when(repository.findByCedula("111")).thenReturn(Optional.empty());
+
+        //EJECUTAR
+        assertThrows(IllegalArgumentException.class, () -> service.buscarPorCedula("111"));
+    }
+
+    @Test
+    void buscarPorCedula_obtienePacientePorCedula(){
+
+        Paciente paciente = new Paciente();
+        paciente.setCedula("111");
+
+        when(repository.findByCedula("111")).thenReturn(Optional.of(paciente));
+
+        assertEquals(paciente, service.buscarPorCedula("111"));
+    }
+
 }
