@@ -1,5 +1,7 @@
 package com.mb.turnos.paciente;
 
+import com.mb.turnos.error.ConflictoException;
+import com.mb.turnos.error.RecursoNoEncontradoException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +30,7 @@ class PacienteServiceTest {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         // Ejecutar y comprobar: tiene que lanzar la excepcion
-        assertThrows(IllegalArgumentException.class, () -> service.eliminar(99L));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.eliminar(99L));
 
         // Y nunca debe intentar borrar nada
         verify(repository, never()).delete(any());
@@ -43,7 +45,7 @@ class PacienteServiceTest {
         Paciente nuevo = new Paciente();
         nuevo.setCedula("12345678");
 
-        assertThrows(IllegalStateException.class, () -> service.crear(nuevo));
+        assertThrows(ConflictoException.class, () -> service.crear(nuevo));
         verify(repository, never()).save(any());
     }
 
@@ -56,7 +58,7 @@ class PacienteServiceTest {
         paciente.setNombre("PacienteNombre");
         paciente.setApellido("PacienteApellido");
 
-        assertThrows(IllegalArgumentException.class, () -> service.actualizar(99L, paciente));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizar(99L, paciente));
         verify(repository, never()).findByCedula(any());
     }
 
@@ -96,7 +98,7 @@ class PacienteServiceTest {
         body.setCedula("222");
 
         //COMPROBAR
-        assertThrows(IllegalStateException.class, () -> service.actualizar(1L, body));
+        assertThrows(ConflictoException.class, () -> service.actualizar(1L, body));
     }
 
     @Test
@@ -121,7 +123,7 @@ class PacienteServiceTest {
         when(repository.findByCedula("111")).thenReturn(Optional.empty());
 
         //EJECUTAR
-        assertThrows(IllegalArgumentException.class, () -> service.buscarPorCedula("111"));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.buscarPorCedula("111"));
     }
 
     @Test
