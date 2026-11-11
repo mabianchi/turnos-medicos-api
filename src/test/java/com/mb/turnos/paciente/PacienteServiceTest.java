@@ -78,4 +78,42 @@ class PacienteServiceTest {
         // COMPROBAR
         assertEquals("Ana María", resultado.getNombre());
     }
+
+    @Test
+    void actualizar_lanzaErrorSiLaNuevaCedulaYaLaTieneOtroPaciente() {
+        //PREPARAR
+        Paciente paciente1 = new Paciente();
+        paciente1.setCedula("111");
+
+        Paciente paciente2 = new Paciente();
+        paciente2.setCedula("222");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(paciente1));
+        when(repository.findByCedula("222")).thenReturn(Optional.of(paciente2));
+
+        //EJECUTAR
+        Paciente body = new Paciente();
+        body.setCedula("222");
+
+        //COMPROBAR
+        assertThrows(IllegalStateException.class, () -> service.actualizar(1L, body));
+    }
+
+    @Test
+    void actualizar_cambiaLaCedulaSiNadieLaTiene() {
+        //PREPARAR
+        Paciente paciente1 = new Paciente();
+        paciente1.setCedula("111");
+        when(repository.findById(1L)).thenReturn(Optional.of(paciente1));
+
+        //EJECUTAR
+        Paciente body = new Paciente();
+        body.setCedula("333");
+
+        //COMPROBAR
+        Paciente resultado = service.actualizar(1L, body);
+        assertEquals("333", resultado.getCedula());
+    }
+
+
 }
