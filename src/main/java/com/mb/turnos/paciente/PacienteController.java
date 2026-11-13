@@ -1,5 +1,6 @@
 package com.mb.turnos.paciente;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,12 +33,12 @@ public class PacienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Paciente crear(@RequestBody Paciente paciente){
+    public Paciente crear(@Valid @RequestBody Paciente paciente){
         return service.crear(paciente);
     }
 
     @PutMapping("/{id}")
-    public Paciente actualizar(@PathVariable Long id, @RequestBody Paciente paciente){
+    public Paciente actualizar(@PathVariable Long id, @Valid @RequestBody Paciente paciente){
         return service.actualizar(id, paciente);
     }
 
