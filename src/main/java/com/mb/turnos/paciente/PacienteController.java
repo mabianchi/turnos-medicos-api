@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,29 +18,37 @@ public class PacienteController {
     }
 
     @GetMapping
-    public List<Paciente> listar(){
-        return service.listar();
+    public List<PacienteResponse> listar(){
+        List<PacienteResponse> pacientes = new ArrayList<>();
+        for(Paciente paciente: service.listar()){
+            pacientes.add(PacienteResponse.desde(paciente));
+        }
+        return pacientes;
     }
 
     @GetMapping("/{id}")
-    public Paciente buscar(@PathVariable Long id){
-        return service.buscarPorId(id);
+    public PacienteResponse buscar(@PathVariable Long id){
+        Paciente paciente = service.buscarPorId(id);
+        return PacienteResponse.desde(paciente);
     }
 
     @GetMapping("/cedula/{cedula}")
-    public Paciente buscarPorCedula(@PathVariable String cedula){
-        return service.buscarPorCedula(cedula);
+    public PacienteResponse buscarPorCedula(@PathVariable String cedula){
+        Paciente paciente = service.buscarPorCedula(cedula);
+        return PacienteResponse.desde(paciente);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Paciente crear(@Valid @RequestBody Paciente paciente){
-        return service.crear(paciente);
+    public PacienteResponse crear(@Valid @RequestBody PacienteRequest request){
+        Paciente creado = service.crear(request.aEntidad());
+        return PacienteResponse.desde(creado);
     }
 
     @PutMapping("/{id}")
-    public Paciente actualizar(@PathVariable Long id, @Valid @RequestBody Paciente paciente){
-        return service.actualizar(id, paciente);
+    public PacienteResponse actualizar(@PathVariable Long id, @Valid @RequestBody PacienteRequest request){
+        Paciente actualizado = service.actualizar(id, request.aEntidad());
+        return PacienteResponse.desde(actualizado);
     }
 
     @DeleteMapping("/{id}")
